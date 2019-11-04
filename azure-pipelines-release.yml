@@ -5,6 +5,11 @@ trigger:
     include:
     - releases/*
 
+pr:
+  branches:
+    exclude:
+    - '*'
+     
 variables:
   - group: 'python-humio-build-release'
   - name: 'onPremLinuxAgent'
