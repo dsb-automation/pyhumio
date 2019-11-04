@@ -1,0 +1,30 @@
+trigger:
+  branches:
+    exclude:
+    - 'master'
+    
+pr:
+- master
+
+variables:
+  - group: 'python-humio-build-release'
+  - name: 'onPremLinuxAgent'
+    value: 'DsbLinuxAgents'
+
+stages:
+- stage: Test
+  displayName: Test python-humio
+  jobs:
+  - job: TestPythonHumio
+    displayName: Run tests for PythonHumio
+    pool:
+      name: $(onPremLinuxAgent)
+    steps:
+    - bash: |
+        pipenv install --dev
+      displayName: Install pipenv dependencies
+      workingDirectory:  $(System.DefaultWorkingDirectory)
+    - bash: |
+        pipenv run pytest -v
+      displayName: Run pytest
+      workingDirectory:  $(System.DefaultWorkingDirectory)
