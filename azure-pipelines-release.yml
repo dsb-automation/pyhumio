@@ -19,13 +19,15 @@ jobs:
   - task: TwineAuthenticate@1
     displayName: 'Twine Authenticate Azure DevOps artifact'
     inputs:
-      artifactFeeds: $(artifact_feed_name)
+      artifactFeed: $(artifact_feed_name)
   - bash: |
       pipenv install
+    displayName: Install pipenv dependencies
+  - bash: |
       pipenv install setuptools wheel
       pipenv run python setup.py sdist bdist_wheel
+    displayName: Create packages
+  - bash: |
       pipenv run install twine
       pipenv run twine upload -r $(artifact_feed_name) --config-file $(PYPIRC_PATH) dist/*
-    displayName: Install pipenv dependencies and push package
-
-
+    displayName: Upload packages
