@@ -4,8 +4,6 @@ trigger:
   branches:
     include:
     - releases/*
-    exclude:
-    - '*'
 
 variables:
   - group: 'python-humio-build-release'
