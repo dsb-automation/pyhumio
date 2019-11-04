@@ -2,6 +2,8 @@ name: 'pyhumio release'
 
 trigger:
   branches:
+    exclude:
+    - '*'
     include:
     - 'release/'
 
@@ -23,7 +25,7 @@ jobs:
   - bash: |
       pipenv install
       pipenv install setuptools wheel
-      pipenv python setup.py sdist bdist_wheel
+      pipenv python3 setup.py sdist bdist_wheel
       pipenv install twine
       pipenv twine upload -r $(artifact_feed_name) --config-file $(PYPIRC_PATH) dist/*
     displayName: Install pipenv dependencies and push package
