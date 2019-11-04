@@ -3,6 +3,11 @@ trigger:
     include:
     - 'release/'
 
+variables:
+  - group: 'python-humio-build-release'
+  - name: 'onPremLinuxAgent'
+    value: 'DsbLinuxAgents'
+
 jobs:
 - job: PushToPip
   displayName: Authenticate and push to pip
@@ -12,7 +17,7 @@ jobs:
   - task: TwineAuthenticate@1
     displayName: 'Twine Authenticate Azure DevOps artifact'
     inputs:
-      artifactFeed: $(artifact_feed_name)
+      artifactFeeds: $(artifact_feed_name)
   - bash: |
       pipenv install
     displayName: Install pipenv dependencies
@@ -20,7 +25,6 @@ jobs:
       pipenv install setuptools wheel
       pipenv python setup.py sdist bdist_wheel
       pipenv install twine
-      pipenv twine upload -r automation-pip dist/*
-      # repo url "https://dsbcp.pkgs.visualstudio.com/_packaging/automation-pip/pypi/upload"
+      pipenv twine upload -r $(artifact_feed_name) --config-file $(PYPIRC_PATH) dist/*
 
 
