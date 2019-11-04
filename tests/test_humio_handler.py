@@ -3,7 +3,7 @@ import pytest
 
 from unittest.mock import MagicMock, patch
 
-from python_humio.log_handler import HumioHandler
+from pyhumio.log_handler import HumioHandler
 
 
 CORRECT_HUMIO = 'correct_token'
@@ -25,8 +25,8 @@ def mocked_requests(*args, **kwargs):
 
 class TestHumoHandler:
 
-    @patch('python_humio.log_handler.HumioHandler.format')
-    @patch('python_humio.log_handler.requests.post', side_effect=mocked_requests)
+    @patch('pyhumio.log_handler.HumioHandler.format')
+    @patch('pyhumio.log_handler.requests.post', side_effect=mocked_requests)
     def test_humio_handler_wrong_token_raises_exception(self, mock_requests, mock_format):
         formatted_message = 'formatted log'
         mock_format.return_value = formatted_message
@@ -38,8 +38,8 @@ class TestHumoHandler:
             handler.emit(formatted_message)
 
 
-    @patch('python_humio.log_handler.HumioHandler.format')
-    @patch('python_humio.log_handler.requests.post', side_effect=mocked_requests)
+    @patch('pyhumio.log_handler.HumioHandler.format')
+    @patch('pyhumio.log_handler.requests.post', side_effect=mocked_requests)
     def test_humio_handler_correct_token_no_exception(self, mock_requests, mock_format):
         formatted_message = 'formatted log'
         mock_format.return_value = formatted_message
@@ -47,8 +47,8 @@ class TestHumoHandler:
         handler = HumioHandler(source='test', environment='dev', humio_token=CORRECT_HUMIO)
         
 
-    @patch('python_humio.log_handler.HumioHandler.format')
-    @patch('python_humio.log_handler.requests.post', side_effect=mocked_requests)
+    @patch('pyhumio.log_handler.HumioHandler.format')
+    @patch('pyhumio.log_handler.requests.post', side_effect=mocked_requests)
     def test_humio_handler_message_format(self, mock_requests, mock_format):
         source = 'test'
         environment = 'dev'
@@ -69,8 +69,8 @@ class TestHumoHandler:
         ]
 
 
-    @patch('python_humio.log_handler.HumioHandler.format')
-    @patch('python_humio.log_handler.requests.post', side_effect=mocked_requests)
+    @patch('pyhumio.log_handler.HumioHandler.format')
+    @patch('pyhumio.log_handler.requests.post', side_effect=mocked_requests)
     def test_requests_called_with_correct_params(self, mock_requests, mock_format):
         source = 'test'
         environment = 'dev'

@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='python-humio',
+    name='pyhumio',
     version='0.0.1',
     author='Nathan Kuik',
     author_email='naku0510@dsb.dk',
     packages=find_packages(),
-    description='Log to Humio from',
+    description="Log to Humio from python's default logger",
     long_description=open('README.md').read(),
     classifiers=[
         "Programming Language :: Python :: 3",
