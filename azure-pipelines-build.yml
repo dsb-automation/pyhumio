@@ -1,13 +1,14 @@
 trigger:
   branches:
-    exclude:
-    - 'master'
+    include:
+    - '*'
     
 pr:
 - master
 
 variables:
   - group: 'python-humio-build-release'
+  - group: 'orch-key-vault-dev'
   - name: 'onPremLinuxAgent'
     value: 'DsbLinuxAgents'
 
