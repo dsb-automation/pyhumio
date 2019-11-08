@@ -4,8 +4,6 @@ import pytest
 import logging
 import datetime
 
-import pytz
-
 from freezegun import freeze_time
 from unittest.mock import MagicMock, patch
 
