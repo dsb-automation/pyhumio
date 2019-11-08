@@ -1,1 +1,1 @@
-from .log_handler import HumioHandler
+from .humio_handler import HumioHandler

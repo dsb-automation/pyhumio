@@ -2,10 +2,11 @@ import os
 import json
 import pytest
 import logging
+import datetime
 
 from unittest.mock import MagicMock, patch
 
-from pyhumio.log_handler import HumioUnstructuredMessage, HumioHandler
+from pyhumio.humio_handler import HumioUnstructuredMessage, HumioHandler, LOG_FORMAT
 
 CORRECT_HUMIO = 'correct_token'
 
@@ -27,19 +28,22 @@ def mocked_requests(*args, **kwargs):
 
 class TestHumoHandler:
 
-    @patch('pyhumio.log_handler.HumioHandler.format')
-    @patch('pyhumio.log_handler.requests.post', side_effect=mocked_requests)
-    def test_humio_unstructured_message(self, mock_requests, mock_format):
+    def test_humio_unstructured_message(self):
         source = 'test'
         environment = 'dev'
+        level = 'info'
         my_log_message = 'formatted log'
-        message = HumioUnstructuredMessage(source, environment, my_log_message)
+        message = HumioUnstructuredMessage(source=source, 
+                                           environment=environment, 
+                                           level=level,
+                                           message=my_log_message)
 
         assert message.built_message == [
             {
                 'fields': {
                     'source': source,
                     'env': environment,
+                    'level': level,
                     'message': my_log_message
                 },
                 'messages': [my_log_message] 
@@ -47,36 +51,25 @@ class TestHumoHandler:
         ]
 
 
-    @patch('pyhumio.log_handler.HumioHandler.format')
-    @patch('pyhumio.log_handler.requests.post', side_effect=mocked_requests)
-    def test_humio_handler_wrong_token_raises_exception(self, mock_requests, mock_format):
-        formatted_message = 'formatted log'
-        mock_format.return_value = formatted_message
-        bad_humio_token = 'bad_token'
-        
-        handler = HumioHandler(source='test', environment='dev', humio_token=bad_humio_token)
-
-        with pytest.raises(Exception):
-            handler.emit(formatted_message)
-
-
-    @patch('pyhumio.log_handler.HumioHandler.format')
-    @patch('pyhumio.log_handler.requests.post', side_effect=mocked_requests)
+    @patch('pyhumio.humio_handler.HumioHandler.format')
+    @patch('pyhumio.humio_handler.requests.post', side_effect=mocked_requests)
     def test_humio_handler_correct_token_no_exception(self, mock_requests, mock_format):
         formatted_message = 'formatted log'
         mock_format.return_value = formatted_message
         
         handler = HumioHandler(source='test', environment='dev', humio_token=CORRECT_HUMIO)
-        
 
-    @patch('pyhumio.log_handler.HumioHandler.format')
-    @patch('pyhumio.log_handler.requests.post', side_effect=mocked_requests)
+
+    @patch('pyhumio.humio_handler.HumioHandler.format')
+    @patch('pyhumio.humio_handler.requests.post', side_effect=mocked_requests)
     def test_requests_called_with_correct_params(self, mock_requests, mock_format):
         source = 'test'
         environment = 'dev'
-        formatted_message = 'formatted log'
-        mock_format.return_value = formatted_message
-        
+        level = 'INFO'
+        message = 'formatted log'
+        mock_format.return_value = message
+
+
         handler = HumioHandler(source=source, environment=environment, humio_token=CORRECT_HUMIO)
 
         expected_data = [
@@ -84,14 +77,18 @@ class TestHumoHandler:
                 'fields': {
                     'source': source,
                     'env': environment,
-                    'message': formatted_message
+                    'level': level,
+                    'message': message
                 },
-                'messages': [formatted_message] 
+                'messages': [message] 
             }
         ]
         expected_string = json.dumps(expected_data)
-        
-        handler.emit(formatted_message)
+
+        logger = logging.getLogger(__name__)
+        logger.addHandler(handler)
+        logger.setLevel(logging.DEBUG)
+        logger.info(message)
 
         mock_requests.assert_called_once_with(
             'https://cloud.humio.com/api/v1/ingest/humio-unstructured', 
@@ -100,7 +97,7 @@ class TestHumoHandler:
         )
 
 
-    @patch('pyhumio.log_handler.requests.post', side_effect=mocked_requests)
+    @patch('pyhumio.humio_handler.requests.post', side_effect=mocked_requests)
     def test_no_exception_thrown_when_logging(self, mock_requests):
         source = 'test'
         environment = 'dev'
@@ -114,8 +111,8 @@ class TestHumoHandler:
         logger.info('This is a test')
 
 
-    @patch('pyhumio.log_handler.requests.post', side_effect=mocked_requests)
-    def test_exception_thrown_when_logging(self, mock_requests):
+    @patch('pyhumio.humio_handler.requests.post', side_effect=mocked_requests)
+    def test_exception_thrown_when_token_is_wrong(self, mock_requests):
         source = 'test'
         environment = 'dev'
 
@@ -127,4 +124,3 @@ class TestHumoHandler:
 
         with pytest.raises(Exception):
             logger.info('This is a test')
-        

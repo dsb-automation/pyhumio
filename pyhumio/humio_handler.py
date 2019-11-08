@@ -1,15 +1,19 @@
 import os
 import json
+import logging
+
 import requests
 
 from typing import Dict, List
-from logging import StreamHandler
 
+
+LOG_FORMAT = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
 
 class HumioUnstructuredMessage:
-    def __init__(self, source: str, environment: str, message: str):
+    def __init__(self, source: str, environment: str, level: str, message: str):
         self.source = source
         self.environment = environment
+        self.level = level
         self.message = message
 
 
@@ -20,6 +24,7 @@ class HumioUnstructuredMessage:
                 'fields': {
                     'source': self.source,
                     'env': self.environment,
+                    'level': self.level,
                     'message': self.message
                 },
                 'messages': [self.message] 
@@ -32,10 +37,14 @@ class HumioUnstructuredMessage:
         return json.dumps(self.built_message)
 
     
-class HumioHandler(StreamHandler):
+class HumioHandler(logging.StreamHandler):
     
     def __init__(self, source: str, environment: str, humio_token: str):
-        StreamHandler.__init__(self)
+        logging.StreamHandler.__init__(self)
+
+        formatter = logging.Formatter(LOG_FORMAT)
+        formatter.default_msec_format = '%s.%03d'
+        self.setFormatter(formatter)
 
         self.token = humio_token
         self.source = source
@@ -53,9 +62,12 @@ class HumioHandler(StreamHandler):
 
     def emit(self, record):
         msg = self.format(record)
-        built_message = HumioUnstructuredMessage(self.source, self.environment, msg)
+        built_message = HumioUnstructuredMessage(source=self.source, 
+                                                 environment=self.environment,
+                                                 level=record.levelname, 
+                                                 message=msg)
 
         send_response = requests.post(self.built_url, data=built_message.to_string(), headers=self.headers)
-        
+
         if send_response.status_code is not 200:
             raise Exception('Error sending log to Humio')
