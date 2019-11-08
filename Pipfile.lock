@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1c1a149928cccde2b5904a624a9abe951cb340548f04de7c60d58057b90117d2"
+            "sha256": "5dcbeaf52ff6e108e81edfaa708665ec64ff661931293673a7baa58af806eedf"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -148,13 +148,13 @@
             ],
             "version": "==19.3.0"
         },
-        "freezegun": {
+        "colorama": {
             "hashes": [
-                "sha256:2a4d9c8cd3c04a201e20c313caf8b6338f1cfa4cda43f46a94cc4a9fd13ea5e7",
-                "sha256:edfdf5bc6040969e6ed2e36eafe277963bdc8b7c01daeda96c5c8594576c9390"
+                "sha256:05eed71e2e327246ad6b38c540c4a3117230b19679b875190486ddd2d721422d",
+                "sha256:f8ac84de7840f5b9c4e3347b3c1eaa50f7e49c2b07596221daec5edaabbd7c48"
             ],
-            "index": "pypi",
-            "version": "==0.3.12"
+            "markers": "sys_platform == 'win32'",
+            "version": "==0.4.1"
         },
         "importlib-metadata": {
             "hashes": [
@@ -206,13 +206,6 @@
             ],
             "index": "pypi",
             "version": "==5.2.2"
-        },
-        "python-dateutil": {
-            "hashes": [
-                "sha256:73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c",
-                "sha256:75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"
-            ],
-            "version": "==2.8.1"
         },
         "six": {
             "hashes": [

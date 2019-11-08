@@ -61,16 +61,15 @@ class TestHumoHandler:
         handler = HumioHandler(source='test', environment='dev', humio_token=CORRECT_HUMIO)
 
 
-    @freeze_time('2019-09-01', tz_offset=2)
+    @patch('pyhumio.humio_handler.HumioHandler.format')
     @patch('pyhumio.humio_handler.requests.post', side_effect=mocked_requests)
-    def test_requests_called_with_correct_params(self, mock_requests):
+    def test_requests_called_with_correct_params(self, mock_requests, mock_format):
         source = 'test'
         environment = 'dev'
         level = 'INFO'
         message = 'formatted log'
-        now = datetime.datetime.now().isoformat(sep=' ', timespec='milliseconds')
-        file_name = os.path.basename(__file__).replace('.py', '')
-        formatted_message = f'[{now}] {level} in {file_name}: {message}'
+        mock_format.return_value = message
+
 
         handler = HumioHandler(source=source, environment=environment, humio_token=CORRECT_HUMIO)
 
@@ -80,9 +79,9 @@ class TestHumoHandler:
                     'source': source,
                     'env': environment,
                     'level': level,
-                    'message': formatted_message
+                    'message': message
                 },
-                'messages': [formatted_message] 
+                'messages': [message] 
             }
         ]
         expected_string = json.dumps(expected_data)
