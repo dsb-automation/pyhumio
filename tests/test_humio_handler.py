@@ -4,7 +4,6 @@ import pytest
 import logging
 import datetime
 
-from freezegun import freeze_time
 from unittest.mock import MagicMock, patch
 
 from pyhumio.humio_handler import HumioUnstructuredMessage, HumioHandler, LOG_FORMAT
