@@ -26,6 +26,11 @@ stages:
       displayName: Install pipenv dependencies
       workingDirectory:  $(System.DefaultWorkingDirectory)
     - bash: |
-        pipenv run pytest -v
+        pipenv run coverage run -m pytest
       displayName: Run pytest
       workingDirectory:  $(System.DefaultWorkingDirectory)
+    - script: |
+        bash <(curl -s https://codecov.io/bash)
+      displayName: 'Upload to codecov.io'
+      env:
+        CODECOV_TOKEN: $(pyhumio-codecov-token)
