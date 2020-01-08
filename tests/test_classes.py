@@ -31,8 +31,8 @@ class TestHumioMessageClasses:
 
 
     def test_humio_structured_message_with_timestamp(self):
-        message = build_structured_message()
         iso_now = datetime.utcnow().astimezone().isoformat()
+        message = build_structured_message(iso_now)
 
         expected_message = [
             {

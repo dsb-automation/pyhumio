@@ -6,3 +6,4 @@
 A little package to make sending logs to Humio a bit easier. Includes:
 
 - Humio-configured python log handler
+- Humio event sender

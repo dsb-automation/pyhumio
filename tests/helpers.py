@@ -24,11 +24,12 @@ def mocked_requests(*args, **kwargs):
     return MockResponse({"humio_auth": "success"}, 200)
 
 
-def build_structured_message():
+def build_structured_message(timestamp=None):
         return HumioStructuredMessage(host='humio_tests', 
                                       source='test_source', 
                                       environment='dev', 
-                                      attributes={'status': True, 'eventType': 'testEvent'})
+                                      attributes={'status': True, 'eventType': 'testEvent'},
+                                      timestamp=timestamp)
 
 
 
