@@ -1,4 +1,4 @@
-from pyhumio.classes import HumioStructuredMessage
+from pyhumio.classes import HumioStructuredMessage, HumioEventSender
 
 CORRECT_HUMIO = 'correct_token'
 
@@ -35,3 +35,13 @@ def build_structured_message():
                                       source=source, 
                                       environment=environment, 
                                       attributes=attributes)
+
+
+def build_event_sender(token):
+        host = 'humio_tests'
+        source = 'test_source'
+        environment = 'dev'
+        return HumioEventSender(host=host, 
+                                source=source, 
+                                environment=environment,
+                                token=token)

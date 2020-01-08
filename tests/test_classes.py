@@ -9,7 +9,9 @@ from freezegun import freeze_time
 
 from pyhumio.classes import HumioStructuredMessage, HumioEventSender
 
-from tests.helpers import CORRECT_HUMIO, mocked_requests, MockResponse, build_structured_message
+from tests.helpers import ( 
+    CORRECT_HUMIO, mocked_requests, MockResponse, build_structured_message, build_event_sender
+)
 
 class TestHumioMessageClasses:
 
@@ -71,16 +73,10 @@ class TestHumioMessageClasses:
         mock_post_async.return_value = f
 
         token = CORRECT_HUMIO
-        environment = 'dev'
-        host = 'humio_tests'
-        source = 'test_source'
-        status = True
-        event_type = 'testEvent'
-        attributes = {'status': status, 'eventType': event_type}
-        event_sender = HumioEventSender(host=host, source=source, token=token, environment=environment)
+        attributes = {'status': 'blah', 'eventType': 'failed'}
+        event_sender = build_event_sender(token)
+        
         event_sender.post_async = mock_post_async
-
-        await event_sender.send_event_async(attributes)
 
         assert mock_post_async.called_once_with(event_sender, mock_session)
 
@@ -89,13 +85,8 @@ class TestHumioMessageClasses:
     @patch('pyhumio.classes.requests.post', side_effect=mocked_requests)
     def test_send_humio_structured_message_happy_path(self, mock_post):
         token = CORRECT_HUMIO
-        environment = 'dev'
-        host = 'humio_tests'
-        source = 'test_source'
-        status = True
-        event_type = 'testEvent'
-        attributes = {'status': status, 'eventType': event_type}
-        event_sender = HumioEventSender(host=host, source=source, token=token, environment=environment)
+        attributes = {'status': 'blah', 'eventType': 'failed'}
+        event_sender = build_event_sender(token)
 
         send_async = event_sender.send_event(attributes)
 
@@ -106,13 +97,8 @@ class TestHumioMessageClasses:
     @patch('pyhumio.classes.requests.post', side_effect=mocked_requests)
     def test_send_humio_structured_message_sad_path(self, mock_post):
         token = 'blah'
-        environment = 'dev'
-        host = 'humio_tests'
-        source = 'test_source'
-        status = True
-        event_type = 'testEvent'
-        attributes = {'status': status, 'eventType': event_type}
-        event_sender = HumioEventSender(host=host, source=source, token=token, environment=environment)
+        attributes = {'status': 'blah', 'eventType': 'failed'}
+        event_sender = build_event_sender(token)
 
         with pytest.raises(Exception):
             event_sender.send_event(attributes)
@@ -122,29 +108,22 @@ class TestHumioMessageClasses:
     @patch('pyhumio.classes.requests.post', side_effect=mocked_requests)
     def test_send_humio_structured_message_call_args(self, mock_post):
         token = CORRECT_HUMIO
-        environment = 'dev'
-        host = 'humio_tests'
-        source = 'test_source'
-        status = True
-        event_type = 'testEvent'
-        attributes = {'status': status, 'eventType': event_type}
-        event_sender = HumioEventSender(host=host, source=source, token=token, environment=environment)
+        event_sender = build_event_sender(token)
+        message = build_structured_message()
+        attributes = {'status': 'blah', 'eventType': 'failed'}
         iso_now = datetime.utcnow().astimezone().isoformat()
 
         expected_data = [
             {
                 "tags": {
-                    "host": host, 
-                    "source": source,
-                    "environment": environment
+                    "host": message.host, 
+                    "source": message.source,
+                    "environment": message.environment
                 }, 
                 "events": [
                     {
                         "timestamp": iso_now, 
-                        "attributes": {
-                            "status": status, 
-                            "eventType": event_type
-                        }
+                        "attributes": attributes
                     }
                 ]
             }
@@ -170,13 +149,9 @@ class TestHumioMessageClasses:
         mock_post_async.return_value = f
 
         token = CORRECT_HUMIO
-        environment = 'dev'
-        host = 'humio_tests'
-        source = 'test_source'
-        status = True
-        event_type = 'testEvent'
-        attributes = {'status': status, 'eventType': event_type}
-        event_sender = HumioEventSender(host=host, source=source, token=token, environment=environment)
+        attributes = {'status': 'blah', 'eventType': 'failed'}
+        event_sender = build_event_sender(token)
+        
         event_sender.post_async = mock_post_async
 
         send_async = await event_sender.send_event_async(attributes)
@@ -193,13 +168,8 @@ class TestHumioMessageClasses:
         mock_post_async.return_value = f
 
         token = CORRECT_HUMIO
-        environment = 'dev'
-        host = 'humio_tests'
-        source = 'test_source'
-        status = True
-        event_type = 'testEvent'
-        attributes = {'status': status, 'eventType': event_type}
-        event_sender = HumioEventSender(host=host, source=source, token=token, environment=environment)
+        attributes = {'status': 'blah', 'eventType': 'failed'}
+        event_sender = build_event_sender(token)        
         event_sender.post_async = mock_post_async
 
         with pytest.raises(Exception):
