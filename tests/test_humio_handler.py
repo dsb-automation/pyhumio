@@ -8,25 +8,9 @@ from unittest.mock import MagicMock, patch
 
 from pyhumio.humio_handler import HumioUnstructuredMessage, HumioHandler, LOG_FORMAT
 
-CORRECT_HUMIO = 'correct_token'
+from tests.helpers import CORRECT_HUMIO, mocked_requests
 
-
-def mocked_requests(*args, **kwargs):
-    class MockResponse:
-        def __init__(self, json_data, status_code):
-            self.json_data = json_data
-            self.status_code = status_code
-
-        def json(self):
-            return self.json_data
-
-    if not CORRECT_HUMIO in kwargs['headers']['Authorization']:
-        return MockResponse({"humio_auth": "failed"}, 403)
-
-    return MockResponse({"humio_auth": "success"}, 200)
-
-
-class TestHumoHandler:
+class TestHumioHandler:
 
     def test_humio_unstructured_message(self):
         source = 'test'

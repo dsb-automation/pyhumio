@@ -6,9 +6,13 @@ verify_ssl = true
 [dev-packages]
 pytest = "*"
 coverage = "*"
+freezegun = "*"
+pytest-asyncio = "*"
+asynctest = "*"
 
 [packages]
 requests = "*"
+aiohttp = "*"
 
 [requires]
 python_version = "3.7"

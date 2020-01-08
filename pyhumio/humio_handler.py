@@ -9,6 +9,9 @@ from typing import Dict, List
 
 LOG_FORMAT = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
 
+
+# TODO: Create humio message base class
+# TODO: Change source to host
 class HumioUnstructuredMessage:
     def __init__(self, source: str, environment: str, level: str, message: str):
         self.source = source
