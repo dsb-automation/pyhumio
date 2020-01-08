@@ -116,7 +116,7 @@ class HumioEventSender:
         response = requests.post(self.humio_url,
                                  data=event.to_string(),
                                  headers=self.headers)
-        if response.status is not 200:
+        if response.status_code is not 200:
             raise Exception('Error sending event to Humio')
         return response
 
