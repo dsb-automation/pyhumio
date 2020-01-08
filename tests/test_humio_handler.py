@@ -6,7 +6,8 @@ import datetime
 
 from unittest.mock import MagicMock, patch
 
-from pyhumio.humio_handler import HumioUnstructuredMessage, HumioHandler, LOG_FORMAT
+from pyhumio.classes import HumioUnstructuredMessage
+from pyhumio.humio_handler import HumioHandler, LOG_FORMAT
 
 from tests.helpers import CORRECT_HUMIO, mocked_requests
 

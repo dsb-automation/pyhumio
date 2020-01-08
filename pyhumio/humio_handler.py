@@ -6,38 +6,10 @@ import requests
 
 from typing import Dict, List
 
+from pyhumio.classes import HumioUnstructuredMessage
+
 
 LOG_FORMAT = '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
-
-
-# TODO: Create humio message base class
-# TODO: Change source to host
-class HumioUnstructuredMessage:
-    def __init__(self, source: str, environment: str, level: str, message: str):
-        self.source = source
-        self.environment = environment
-        self.level = level
-        self.message = message
-
-
-    @property
-    def built_message(self) -> List:
-        built_message = [
-            {
-                'fields': {
-                    'source': self.source,
-                    'env': self.environment,
-                    'level': self.level,
-                    'message': self.message
-                },
-                'messages': [self.message] 
-            }
-        ]
-        return built_message
-
-
-    def to_string(self) -> str:
-        return json.dumps(self.built_message)
 
     
 class HumioHandler(logging.StreamHandler):

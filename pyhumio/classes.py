@@ -10,17 +10,67 @@ from datetime import datetime, timezone
 
 
 class HumioMessage(ABC):
-    pass
 
-
-class HumioStructuredMessage:
-
-    def __init__(self, host: str, source: str, environment: str, attributes: Dict, timestamp: str = None):
+    @abstractmethod
+    def __init__(self, host: str, source: str, environment: str):
         self.host = host
         self.source = source
         self.environment = environment
+
+    @abstractmethod
+    def built_message(self) -> List:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def to_string(self) -> str:
+        raise NotImplementedError()
+
+
+class HumioUnstructuredMessage(HumioMessage):
+    
+    def __init__(self, 
+                 source: str, 
+                 environment: str, 
+                 level: str, 
+                 message: str,
+                 host=None):
+        _host = host if host else source
+        self.level = level
+        self.message = message
+        super(HumioUnstructuredMessage, self).__init__(_host, source, environment)
+
+
+    @property
+    def built_message(self) -> List:
+        built_message = [
+            {
+                'fields': {
+                    'source': self.source,
+                    'env': self.environment,
+                    'level': self.level,
+                    'message': self.message
+                },
+                'messages': [self.message] 
+            }
+        ]
+        return built_message
+
+
+    def to_string(self) -> str:
+        return json.dumps(self.built_message)
+        
+
+class HumioStructuredMessage(HumioMessage):
+
+    def __init__(self, 
+                 host: str, 
+                 source: str, 
+                 environment: str, 
+                 attributes: Dict, 
+                 timestamp: str = None):
         self.attributes = attributes
         self.timestamp = timestamp if timestamp else datetime.utcnow().astimezone().isoformat()
+        super(HumioStructuredMessage, self).__init__(host, source, environment)
 
     @property
     def built_message(self) -> List:
@@ -45,6 +95,7 @@ class HumioStructuredMessage:
 
 
 class HumioEventSender:
+
     def __init__(self, source: str, token: str, environment: str, host: str = None):
         self.source = source
         self.token = token
