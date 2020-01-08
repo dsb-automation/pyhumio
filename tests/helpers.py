@@ -25,16 +25,11 @@ def mocked_requests(*args, **kwargs):
 
 
 def build_structured_message():
-        host = 'humio_tests'
-        source = 'test_source'
-        environment = 'dev'
-        status = True
-        event_type = 'testEvent'
-        attributes = {'status': status, 'eventType': event_type}
-        return HumioStructuredMessage(host=host, 
-                                      source=source, 
-                                      environment=environment, 
-                                      attributes=attributes)
+        return HumioStructuredMessage(host='humio_tests', 
+                                      source='test_source', 
+                                      environment='dev', 
+                                      attributes={'status': True, 'eventType': 'testEvent'})
+
 
 
 def build_event_sender(token):

@@ -38,11 +38,15 @@ class TestHumioHandler:
 
     @patch('pyhumio.humio_handler.HumioHandler.format')
     @patch('pyhumio.humio_handler.requests.post', side_effect=mocked_requests)
-    def test_humio_handler_correct_token_no_exception(self, mock_requests, mock_format):
+    def test_humio_handler_correct_token_no_exception(self, 
+                                                      mock_requests, 
+                                                      mock_format):
         formatted_message = 'formatted log'
         mock_format.return_value = formatted_message
         
-        handler = HumioHandler(source='test', environment='dev', humio_token=CORRECT_HUMIO)
+        handler = HumioHandler(source='test',
+                               environment='dev', 
+                               humio_token=CORRECT_HUMIO)
 
 
     @patch('pyhumio.humio_handler.HumioHandler.format')
@@ -54,8 +58,9 @@ class TestHumioHandler:
         message = 'formatted log'
         mock_format.return_value = message
 
-
-        handler = HumioHandler(source=source, environment=environment, humio_token=CORRECT_HUMIO)
+        handler = HumioHandler(source=source, 
+                               environment=environment, 
+                               humio_token=CORRECT_HUMIO)
 
         expected_data = [
             {
@@ -87,7 +92,9 @@ class TestHumioHandler:
         source = 'test'
         environment = 'dev'
 
-        handler = HumioHandler(source=source, environment=environment, humio_token=CORRECT_HUMIO)
+        handler = HumioHandler(source=source, 
+                               environment=environment, 
+                               humio_token=CORRECT_HUMIO)
         
         logger = logging.getLogger(__name__)
         logger.addHandler(handler)
@@ -101,7 +108,9 @@ class TestHumioHandler:
         source = 'test'
         environment = 'dev'
 
-        handler = HumioHandler(source=source, environment=environment, humio_token='blah')
+        handler = HumioHandler(source=source, 
+                               environment=environment, 
+                               humio_token='blah')
         
         logger = logging.getLogger(__name__)
         logger.addHandler(handler)

@@ -67,7 +67,9 @@ class TestHumioMessageClasses:
     @freeze_time('2020-11-16')
     @patch('pyhumio.classes.aiohttp.ClientSession')
     @patch('pyhumio.classes.HumioEventSender.post_async')
-    async def test_send_humio_structured_message_post_args(self, mock_session, mock_post_async):
+    async def test_send_humio_structured_message_post_args(self, 
+                                                           mock_session, 
+                                                           mock_post_async):
         f = asyncio.Future()
         f.set_result(MockResponse({}, 200))
         mock_post_async.return_value = f
@@ -143,7 +145,8 @@ class TestHumioMessageClasses:
     @pytest.mark.asyncio
     @freeze_time('2020-11-16')
     @patch('pyhumio.classes.HumioEventSender.post_async')
-    async def test_async_send_humio_structured_message_happy_path(self, mock_post_async):
+    async def test_async_send_humio_structured_message_happy_path(self, 
+                                                                  mock_post_async):
         f = asyncio.Future()
         f.set_result(MockResponse({}, 200))
         mock_post_async.return_value = f
