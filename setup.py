@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyhumio',
-    version='0.0.3',
+    version='0.0.4',
     author='Nathan Kuik',
     author_email='naku0510@dsb.dk',
     packages=find_packages(),
@@ -15,6 +15,7 @@ setup(
     ],
     python_requires='>=3.7',
     install_requires=[
-        'requests'
+        'requests',
+        'aiohttp'
     ]
 )

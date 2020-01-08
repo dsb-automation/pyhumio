@@ -6,27 +6,12 @@ import datetime
 
 from unittest.mock import MagicMock, patch
 
-from pyhumio.humio_handler import HumioUnstructuredMessage, HumioHandler, LOG_FORMAT
+from pyhumio.classes import HumioUnstructuredMessage
+from pyhumio.humio_handler import HumioHandler, LOG_FORMAT
 
-CORRECT_HUMIO = 'correct_token'
+from tests.helpers import CORRECT_HUMIO, mocked_requests
 
-
-def mocked_requests(*args, **kwargs):
-    class MockResponse:
-        def __init__(self, json_data, status_code):
-            self.json_data = json_data
-            self.status_code = status_code
-
-        def json(self):
-            return self.json_data
-
-    if not CORRECT_HUMIO in kwargs['headers']['Authorization']:
-        return MockResponse({"humio_auth": "failed"}, 403)
-
-    return MockResponse({"humio_auth": "success"}, 200)
-
-
-class TestHumoHandler:
+class TestHumioHandler:
 
     def test_humio_unstructured_message(self):
         source = 'test'
@@ -53,11 +38,15 @@ class TestHumoHandler:
 
     @patch('pyhumio.humio_handler.HumioHandler.format')
     @patch('pyhumio.humio_handler.requests.post', side_effect=mocked_requests)
-    def test_humio_handler_correct_token_no_exception(self, mock_requests, mock_format):
+    def test_humio_handler_correct_token_no_exception(self, 
+                                                      mock_requests, 
+                                                      mock_format):
         formatted_message = 'formatted log'
         mock_format.return_value = formatted_message
         
-        handler = HumioHandler(source='test', environment='dev', humio_token=CORRECT_HUMIO)
+        handler = HumioHandler(source='test',
+                               environment='dev', 
+                               humio_token=CORRECT_HUMIO)
 
 
     @patch('pyhumio.humio_handler.HumioHandler.format')
@@ -69,8 +58,9 @@ class TestHumoHandler:
         message = 'formatted log'
         mock_format.return_value = message
 
-
-        handler = HumioHandler(source=source, environment=environment, humio_token=CORRECT_HUMIO)
+        handler = HumioHandler(source=source, 
+                               environment=environment, 
+                               humio_token=CORRECT_HUMIO)
 
         expected_data = [
             {
@@ -102,7 +92,9 @@ class TestHumoHandler:
         source = 'test'
         environment = 'dev'
 
-        handler = HumioHandler(source=source, environment=environment, humio_token=CORRECT_HUMIO)
+        handler = HumioHandler(source=source, 
+                               environment=environment, 
+                               humio_token=CORRECT_HUMIO)
         
         logger = logging.getLogger(__name__)
         logger.addHandler(handler)
@@ -116,7 +108,9 @@ class TestHumoHandler:
         source = 'test'
         environment = 'dev'
 
-        handler = HumioHandler(source=source, environment=environment, humio_token='blah')
+        handler = HumioHandler(source=source, 
+                               environment=environment, 
+                               humio_token='blah')
         
         logger = logging.getLogger(__name__)
         logger.addHandler(handler)
