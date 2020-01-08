@@ -9,50 +9,54 @@ from freezegun import freeze_time
 
 from pyhumio.classes import HumioStructuredMessage, HumioEventSender
 
-from tests.helpers import CORRECT_HUMIO, mocked_requests, MockResponse
+from tests.helpers import CORRECT_HUMIO, mocked_requests, MockResponse, build_structured_message
 
 class TestHumioMessageClasses:
 
     @freeze_time('2020-09-01')
     def test_humio_structured_message_without_timestamp(self):
-        host = 'humio_tests'
-        source = 'test_source'
-        status = True
-        event_type = 'testEvent'
-        attributes = {'status': status, 'eventType': event_type}
-        message = HumioStructuredMessage(host=host, source=source, attributes=attributes)
+        message = build_structured_message()
         iso_now = datetime.utcnow().astimezone().isoformat()
         
-        expected_message = [{'tags': {'host': 'humio_tests', 'source': 'test_source'}, 'events': [{'timestamp': '2020-09-01T00:00:00+02:00', 'attributes': {'status': True, 'eventType': 'testEvent'}}]}]
+        expected_message = [
+            {
+                'tags': {'host': message.host, 'source': message.source, 'environment': message.environment}, 
+                'events': [{'timestamp': iso_now, 'attributes': {'status': True, 'eventType': 'testEvent'}}]
+            }
+        ]
 
         assert expected_message == message.built_message
 
 
     def test_humio_structured_message_with_timestamp(self):
-        host = 'humio_tests'
-        source = 'test_source'
-        status = True
-        event_type = 'testEvent'
-        attributes = {'status': status, 'eventType': event_type}
+        message = build_structured_message()
         iso_now = datetime.utcnow().astimezone().isoformat()
-        message = HumioStructuredMessage(host=host, source=source, attributes=attributes, timestamp=iso_now)
-        
-        expected_message = [{'tags': {'host': 'humio_tests', 'source': 'test_source'}, 'events': [{'timestamp': iso_now, 'attributes': {'status': True, 'eventType': 'testEvent'}}]}]
+
+        expected_message = [
+            {
+                'tags': {'host': message.host, 'source': message.source, 'environment': message.environment}, 
+                'events': [{'timestamp': iso_now, 'attributes': {'status': True, 'eventType': 'testEvent'}}]
+            }
+        ]
 
         assert expected_message == message.built_message
 
 
     @freeze_time('2020-11-16')
     def test_humio_structured_message_to_string(self):
-        host = 'humio_tests'
-        source = 'test_source'
-        status = True
-        event_type = 'testEvent'
-        attributes = {'status': status, 'eventType': event_type}
-        message = HumioStructuredMessage(host=host, source=source, attributes=attributes)
+        message = build_structured_message()
         iso_now = datetime.utcnow().astimezone().isoformat()
         
-        expected_message = json.dumps([{'tags': {'host': 'humio_tests', 'source': 'test_source'}, 'events': [{'timestamp': '2020-11-16T00:00:00+01:00', 'attributes': {'status': True, 'eventType': 'testEvent'}}]}])
+        expected_message = json.dumps(
+            [
+                {
+                    'tags': {'host': message.host, 'source': message.source, 'environment': message.environment}, 
+                    'events': [
+                        {'timestamp': iso_now, 'attributes': {'status': True, 'eventType': 'testEvent'}}
+                    ]
+                }
+            ]
+        )
 
         assert expected_message == message.to_string()
 
@@ -131,7 +135,8 @@ class TestHumioMessageClasses:
             {
                 "tags": {
                     "host": host, 
-                    "source": source
+                    "source": source,
+                    "environment": environment
                 }, 
                 "events": [
                     {

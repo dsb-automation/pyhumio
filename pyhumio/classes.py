@@ -4,14 +4,21 @@ import asyncio
 import aiohttp
 import requests
 
-from datetime import datetime, timezone
 from typing import Dict, List
+from abc import ABC, abstractmethod
+from datetime import datetime, timezone
+
+
+class HumioMessage(ABC):
+    pass
 
 
 class HumioStructuredMessage:
-    def __init__(self, host: str, source: str, attributes: Dict, timestamp: str = None):
+
+    def __init__(self, host: str, source: str, environment: str, attributes: Dict, timestamp: str = None):
         self.host = host
         self.source = source
+        self.environment = environment
         self.attributes = attributes
         self.timestamp = timestamp if timestamp else datetime.utcnow().astimezone().isoformat()
 
@@ -21,7 +28,8 @@ class HumioStructuredMessage:
             {
                 'tags': {
                     'host': self.host,
-                    'source': self.source
+                    'source': self.source,
+                    'environment': self.environment
                 },
                 'events': [
                     {
@@ -53,7 +61,7 @@ class HumioEventSender:
 
     def send_event(self, attributes: Dict, timestamp: str = None):
         # Event should be dependency injected
-        event = HumioStructuredMessage(self.host, self.source, attributes, timestamp)    
+        event = HumioStructuredMessage(self.host, self.source, self.environment, attributes, timestamp)    
         response = requests.post(self.humio_url,
                                  data=event.to_string(),
                                  headers=self.headers)
@@ -69,7 +77,7 @@ class HumioEventSender:
 
     async def send_event_async(self, attributes: Dict, timestamp: str = None):
         # Event should be dependency injected
-        event = HumioStructuredMessage(self.host, self.source, attributes, timestamp)    
+        event = HumioStructuredMessage(self.host, self.source, self.environment, attributes, timestamp)    
     
         async with aiohttp.ClientSession() as session:
                 response = await self.post_async(session, event)
