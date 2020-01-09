@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyhumio',
-    version='0.0.5',
+    version='0.0.6',
     author='Nathan Kuik',
     author_email='naku0510@dsb.dk',
     packages=find_packages(),
