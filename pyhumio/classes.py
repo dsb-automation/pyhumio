@@ -79,7 +79,7 @@ class HumioStructuredMessage(HumioMessage):
                 'tags': {
                     'host': self.host,
                     'source': self.source,
-                    'environment': self.environment
+                    'env': self.environment
                 },
                 'events': [
                     {

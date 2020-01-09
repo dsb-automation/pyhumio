@@ -7,13 +7,37 @@ from unittest.mock import patch
 
 from freezegun import freeze_time
 
-from pyhumio.classes import HumioStructuredMessage, HumioEventSender
+from pyhumio.classes import HumioUnstructuredMessage, HumioStructuredMessage, HumioEventSender
 
 from tests.helpers import ( 
     CORRECT_HUMIO, mocked_requests, MockResponse, build_structured_message, build_event_sender
 )
 
-class TestHumioMessageClasses:
+class TestHumioUnstructuredMessageClasses:
+
+    def test_humio_unstructured_message(self):
+        source = 'test'
+        environment = 'dev'
+        level = 'info'
+        my_log_message = 'formatted log'
+        message = HumioUnstructuredMessage(source=source, 
+                                           environment=environment, 
+                                           level=level,
+                                           message=my_log_message)
+
+        assert message.built_message == [
+            {
+                'fields': {
+                    'source': source,
+                    'env': environment,
+                    'level': level,
+                    'message': my_log_message
+                },
+                'messages': [my_log_message] 
+            }
+        ]
+
+class TestHumioStructuredMessageClasses:
 
     @freeze_time('2020-09-01')
     def test_humio_structured_message_without_timestamp(self):
@@ -22,7 +46,7 @@ class TestHumioMessageClasses:
         
         expected_message = [
             {
-                'tags': {'host': message.host, 'source': message.source, 'environment': message.environment}, 
+                'tags': {'host': message.host, 'source': message.source, 'env': message.environment}, 
                 'events': [{'timestamp': iso_now, 'attributes': {'status': True, 'eventType': 'testEvent'}}]
             }
         ]
@@ -36,7 +60,7 @@ class TestHumioMessageClasses:
 
         expected_message = [
             {
-                'tags': {'host': message.host, 'source': message.source, 'environment': message.environment}, 
+                'tags': {'host': message.host, 'source': message.source, 'env': message.environment}, 
                 'events': [{'timestamp': iso_now, 'attributes': {'status': True, 'eventType': 'testEvent'}}]
             }
         ]
@@ -52,7 +76,7 @@ class TestHumioMessageClasses:
         expected_message = json.dumps(
             [
                 {
-                    'tags': {'host': message.host, 'source': message.source, 'environment': message.environment}, 
+                    'tags': {'host': message.host, 'source': message.source, 'env': message.environment}, 
                     'events': [
                         {'timestamp': iso_now, 'attributes': {'status': True, 'eventType': 'testEvent'}}
                     ]
@@ -117,15 +141,15 @@ class TestHumioMessageClasses:
 
         expected_data = [
             {
-                "tags": {
-                    "host": message.host, 
-                    "source": message.source,
-                    "environment": message.environment
+                'tags': {
+                    'host': message.host, 
+                    'source': message.source,
+                    'env': message.environment
                 }, 
-                "events": [
+                'events': [
                     {
-                        "timestamp": iso_now, 
-                        "attributes": attributes
+                        'timestamp': iso_now, 
+                        'attributes': attributes
                     }
                 ]
             }

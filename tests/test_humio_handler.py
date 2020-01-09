@@ -6,35 +6,12 @@ import datetime
 
 from unittest.mock import MagicMock, patch
 
-from pyhumio.classes import HumioUnstructuredMessage
 from pyhumio.humio_handler import HumioHandler, LOG_FORMAT
 
 from tests.helpers import CORRECT_HUMIO, mocked_requests
 
+
 class TestHumioHandler:
-
-    def test_humio_unstructured_message(self):
-        source = 'test'
-        environment = 'dev'
-        level = 'info'
-        my_log_message = 'formatted log'
-        message = HumioUnstructuredMessage(source=source, 
-                                           environment=environment, 
-                                           level=level,
-                                           message=my_log_message)
-
-        assert message.built_message == [
-            {
-                'fields': {
-                    'source': source,
-                    'env': environment,
-                    'level': level,
-                    'message': my_log_message
-                },
-                'messages': [my_log_message] 
-            }
-        ]
-
 
     @patch('pyhumio.humio_handler.HumioHandler.format')
     @patch('pyhumio.humio_handler.requests.post', side_effect=mocked_requests)
