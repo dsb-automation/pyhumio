@@ -22,7 +22,7 @@ class TestHumioMessageClasses:
         
         expected_message = [
             {
-                'tags': {'host': message.host, 'source': message.source, 'environment': message.environment}, 
+                'tags': {'host': message.host, 'source': message.source, 'env': message.environment}, 
                 'events': [{'timestamp': iso_now, 'attributes': {'status': True, 'eventType': 'testEvent'}}]
             }
         ]
@@ -36,7 +36,7 @@ class TestHumioMessageClasses:
 
         expected_message = [
             {
-                'tags': {'host': message.host, 'source': message.source, 'environment': message.environment}, 
+                'tags': {'host': message.host, 'source': message.source, 'env': message.environment}, 
                 'events': [{'timestamp': iso_now, 'attributes': {'status': True, 'eventType': 'testEvent'}}]
             }
         ]
@@ -52,7 +52,7 @@ class TestHumioMessageClasses:
         expected_message = json.dumps(
             [
                 {
-                    'tags': {'host': message.host, 'source': message.source, 'environment': message.environment}, 
+                    'tags': {'host': message.host, 'source': message.source, 'env': message.environment}, 
                     'events': [
                         {'timestamp': iso_now, 'attributes': {'status': True, 'eventType': 'testEvent'}}
                     ]
@@ -117,15 +117,15 @@ class TestHumioMessageClasses:
 
         expected_data = [
             {
-                "tags": {
-                    "host": message.host, 
-                    "source": message.source,
-                    "environment": message.environment
+                'tags': {
+                    'host': message.host, 
+                    'source': message.source,
+                    'env': message.environment
                 }, 
-                "events": [
+                'events': [
                     {
-                        "timestamp": iso_now, 
-                        "attributes": attributes
+                        'timestamp': iso_now, 
+                        'attributes': attributes
                     }
                 ]
             }
