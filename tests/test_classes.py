@@ -7,13 +7,37 @@ from unittest.mock import patch
 
 from freezegun import freeze_time
 
-from pyhumio.classes import HumioStructuredMessage, HumioEventSender
+from pyhumio.classes import HumioUnstructuredMessage, HumioStructuredMessage, HumioEventSender
 
 from tests.helpers import ( 
     CORRECT_HUMIO, mocked_requests, MockResponse, build_structured_message, build_event_sender
 )
 
-class TestHumioMessageClasses:
+class TestHumioUnstructuredMessageClasses:
+
+    def test_humio_unstructured_message(self):
+        source = 'test'
+        environment = 'dev'
+        level = 'info'
+        my_log_message = 'formatted log'
+        message = HumioUnstructuredMessage(source=source, 
+                                           environment=environment, 
+                                           level=level,
+                                           message=my_log_message)
+
+        assert message.built_message == [
+            {
+                'fields': {
+                    'source': source,
+                    'env': environment,
+                    'level': level,
+                    'message': my_log_message
+                },
+                'messages': [my_log_message] 
+            }
+        ]
+
+class TestHumioStructuredMessageClasses:
 
     @freeze_time('2020-09-01')
     def test_humio_structured_message_without_timestamp(self):
